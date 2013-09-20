@@ -24,38 +24,42 @@ public class WorkLogContract {
 
     protected interface WifisColumns {
         public static final String PLACE_ID = "place_id";
-        public static final String STATE_BSSID = "bssid";
+        public static final String BSSID = "bssid";
     }
 
     public static class WorkLogStates implements BaseColumns, WorkLogStateColumns {
+        public static final String PATH = "workLogStates";
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
-                .path("worklogstates")
+                .path("")
                 .build();
     }
 
     public static class Places implements BaseColumns, PlaceColumns {
+        public static final String PATH = "places";
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
-                .path("places")
+                .path(PATH)
                 .build();
     }
 
     public static class Wifis implements BaseColumns, WifisColumns {
+        public static final String PATH = "wifis";
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
-                .path("wifis")
+                .path(PATH)
                 .build();
     }
 
     public static class PlaceLogs implements BaseColumns, PlaceColumns, WorkLogStateColumns {
+        public static final String PATH = "placeLogs";
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
-                .path("place-logs")
+                .path(PATH)
                 .build();
     }
 }
