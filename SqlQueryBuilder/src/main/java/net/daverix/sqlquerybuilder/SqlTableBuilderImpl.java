@@ -5,33 +5,48 @@ package net.daverix.sqlquerybuilder;
  */
 public class SqlTableBuilderImpl implements SqlTableBuilder {
     @Override
-    public Table createTable(String tableName) {
+    public Column createTable(String tableName) {
         StringBuilder builder = new StringBuilder("CREATE TABLE ");
         builder.append(tableName);
         builder.append(" (");
 
-        return new TableImpl(builder);
+        return new FirstColumn(builder);
     }
 
     @Override
-    public Table createTableIfNotExists(String tableName) {
+    public Column createTableIfNotExists(String tableName) {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
         builder.append(tableName);
         builder.append(" (");
 
-        return new TableImpl(builder);
+        return new FirstColumn(builder);
     }
 
-    private class TableImpl implements Table {
+    private class FirstColumn implements Column {
         private final StringBuilder mBuilder;
 
-        private TableImpl(StringBuilder builder) {
+        private FirstColumn(StringBuilder builder) {
             mBuilder = builder;
         }
 
         @Override
         public ColumnType withField(String field) {
             mBuilder.append(field);
+
+            return new ColumnTypeImpl(mBuilder);
+        }
+    }
+
+    private class OtherColumn implements Column {
+        private final StringBuilder mBuilder;
+
+        private OtherColumn(StringBuilder builder) {
+            mBuilder = builder;
+        }
+
+        @Override
+        public ColumnType withField(String field) {
+            mBuilder.append(",").append(field);
 
             return new ColumnTypeImpl(mBuilder);
         }
@@ -65,13 +80,13 @@ public class SqlTableBuilderImpl implements SqlTableBuilder {
         @Override
         public ColumnConstraint notNull() {
             mBuilder.append(" NOT NULL");
-            return null;
+            return new ColumnConstrainImpl(mBuilder);
         }
 
         @Override
         public ColumnConstraint defaultValue(String value) {
             mBuilder.append(" DEFAULT ").append(value);
-            return this;
+            return new ColumnConstrainImpl(mBuilder);
         }
 
         @Override
@@ -129,7 +144,7 @@ public class SqlTableBuilderImpl implements SqlTableBuilder {
 
         @Override
         public AutoIncrement primaryKey() {
-            mBuilder.append(" PRIMARY KEY ");
+            mBuilder.append(" PRIMARY KEY");
             return new AutoIncrementImpl(mBuilder);
         }
 
@@ -148,9 +163,9 @@ public class SqlTableBuilderImpl implements SqlTableBuilder {
         }
 
         @Override
-        public Table autoIncrement() {
+        public Column autoIncrement() {
             mBuilder.append(" AUTOINCREMENT");
-            return new TableImpl(mBuilder);
+            return new OtherColumn(mBuilder);
         }
 
         @Override

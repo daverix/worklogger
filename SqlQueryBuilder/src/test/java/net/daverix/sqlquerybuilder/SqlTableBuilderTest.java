@@ -15,13 +15,15 @@ public class SqlTableBuilderTest {
         //Arrange
         final String expected = "CREATE TABLE IF NOT EXISTS APA (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
-                "message TEXT);";
+                "message TEXT,banana);";
 
         //Act
-        final String actual = SqlTableBuilderFactory.getBuilder().createTableIfNotExists("APA")
+        final String actual = SqlTableBuilderFactory.getBuilder()
+                .createTableIfNotExists("APA")
                 .withField("_id").asNumber().notNull().primaryKey().autoIncrement()
                 .withField("name").asText().notNull()
-                .withField("message").asText().notNull()
+                .withField("message").asText()
+                .withField("banana")
                 .create();
 
         //Assert

@@ -4,14 +4,14 @@ package net.daverix.sqlquerybuilder;
  * Created by daverix on 9/20/13.
  */
 public interface SqlTableBuilder {
-    public Table createTable(String tableName);
-    public Table createTableIfNotExists(String tableName);
+    public Column createTable(String tableName);
+    public Column createTableIfNotExists(String tableName);
 
-    public interface Table {
+    public interface Column {
         ColumnType withField(String field);
     }
 
-    public interface Creator {
+    public interface Creator extends Column {
         String create();
     }
 
@@ -21,28 +21,27 @@ public interface SqlTableBuilder {
         ColumnConstraint asText();
     }
 
-    public interface AutoIncrement extends Table {
-        Table autoIncrement();
+    public interface AutoIncrement extends Column {
+        Column autoIncrement();
     }
 
-    public interface PrimaryKeyColumn extends Table {
+    public interface PrimaryKeyColumn extends Column {
         AutoIncrement primaryKey();
     }
 
-    public interface ColumnConstraint extends PrimaryKeyColumn, Table, Creator {
+    public interface ColumnConstraint extends PrimaryKeyColumn, Column, Creator {
         ColumnConstraint notNull();
         ColumnConstraint defaultValue(String value);
         References references(String tableName);
     }
 
-    public interface References {
+    public interface References extends Column {
         ReferenceAction onDelete();
         ReferenceAction onUpdate();
-        ColumnConstraint withField(String name);
     }
 
-    public interface ReferenceAction {
-        public ColumnConstraint setNUll();
+    public interface ReferenceAction extends Creator {
+        public ColumnConstraint setNull();
         public ColumnConstraint setDefault();
         public ColumnConstraint cascade();
         public ColumnConstraint restrict();
