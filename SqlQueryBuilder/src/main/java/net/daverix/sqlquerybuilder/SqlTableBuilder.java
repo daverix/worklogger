@@ -16,8 +16,6 @@ public interface SqlTableBuilder {
     }
 
     public interface ColumnType extends ColumnConstraint {
-        ColumnConstraint asNull();
-        ColumnConstraint asInteger();
         ColumnConstraint asNumber();
         ColumnConstraint asReal();
         ColumnConstraint asText();
@@ -38,6 +36,16 @@ public interface SqlTableBuilder {
     }
 
     public interface References {
+        ReferenceAction onDelete();
+        ReferenceAction onUpdate();
         ColumnConstraint withField(String name);
+    }
+
+    public interface ReferenceAction {
+        public ColumnConstraint setNUll();
+        public ColumnConstraint setDefault();
+        public ColumnConstraint cascade();
+        public ColumnConstraint restrict();
+        public ColumnConstraint noAction();
     }
 }

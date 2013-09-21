@@ -22,7 +22,7 @@ public class SqlTableBuilderTest {
                 .withField("_id").asNumber().notNull().primaryKey().autoIncrement()
                 .withField("name").asText().notNull()
                 .withField("message").asText().notNull()
-                .crea;
+                .create();
 
         //Assert
         Assert.assertThat(actual, is(equalTo(expected)));

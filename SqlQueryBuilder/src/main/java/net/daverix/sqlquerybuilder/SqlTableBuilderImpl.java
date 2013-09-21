@@ -30,79 +30,133 @@ public class SqlTableBuilderImpl implements SqlTableBuilder {
         }
 
         @Override
-        public Field withPrimaryKey(String field) {
-            mBuilder.append(field).append(" ");
+        public ColumnType withField(String field) {
+            mBuilder.append(field);
 
-            Field f = new FieldImpl(mBuilder);
-
-            mBuilder.append(" PRIMARY KEY");
-
-            return f;
+            return new ColumnTypeImpl(mBuilder);
         }
     }
 
-    private class FieldImpl implements Field {
+    private class ColumnTypeImpl implements ColumnType {
         private final StringBuilder mBuilder;
 
-        public FieldImpl(StringBuilder builder) {
+        public ColumnTypeImpl(StringBuilder builder) {
             mBuilder = builder;
         }
 
         @Override
-        public FieldType asNumber() {
-            mBuilder.append("INTEGER");
-            return new FieldTypeImpl(mBuilder);
+        public ColumnConstraint asNumber() {
+            mBuilder.append(" INTEGER");
+            return new ColumnConstrainImpl(mBuilder);
         }
 
         @Override
-        public FieldType asReal() {
-            mBuilder.append("REAL");
-            return new FieldTypeImpl(mBuilder);
+        public ColumnConstraint asReal() {
+            mBuilder.append(" REAL");
+            return new ColumnConstrainImpl(mBuilder);
         }
 
         @Override
-        public FieldType asText() {
-            mBuilder.append("TEXT");
-            return new FieldTypeImpl(mBuilder);
-        }
-    }
-
-    private class FieldTypeImpl implements FieldType {
-        private final StringBuilder mBuilder;
-
-        public FieldTypeImpl(StringBuilder builder) {
-            mBuilder = builder;
+        public ColumnConstraint asText() {
+            mBuilder.append(" TEXT");
+            return new ColumnConstrainImpl(mBuilder);
         }
 
         @Override
-        public FieldProperty whichCanBeNull() {
+        public ColumnConstraint notNull() {
             mBuilder.append(" NOT NULL");
-            return new FieldPropertyImpl(mBuilder);
+            return null;
         }
 
         @Override
-        public FieldProperty whichMustNotBeNull() {
-            return new FieldPropertyImpl(mBuilder);
-        }
-    }
-
-    private class FieldPropertyImpl implements FieldProperty {
-        private final StringBuilder mBuilder;
-
-        public FieldPropertyImpl(StringBuilder builder) {
-            mBuilder = builder;
+        public ColumnConstraint defaultValue(String value) {
+            mBuilder.append(" DEFAULT ").append(value);
+            return this;
         }
 
         @Override
-        public Field andAddField(String field) {
-            mBuilder.append(", ");
-            return new FieldImpl(mBuilder);
+        public References references(String tableName) {
+            return null;
         }
 
         @Override
-        public String andCreateSql() {
+        public String create() {
             mBuilder.append(");");
             return mBuilder.toString();
+        }
+
+        @Override
+        public AutoIncrement primaryKey() {
+            mBuilder.append(" PRIMARY KEY");
+            return new AutoIncrementImpl(mBuilder);
+        }
+
+        @Override
+        public ColumnType withField(String field) {
+            mBuilder.append(",").append(field);
+            return new ColumnTypeImpl(mBuilder);
+        }
+    }
+
+    private class ColumnConstrainImpl implements ColumnConstraint {
+        private final StringBuilder mBuilder;
+
+        public ColumnConstrainImpl(StringBuilder builder) {
+            mBuilder = builder;
+        }
+
+        @Override
+        public ColumnConstraint notNull() {
+            mBuilder.append(" NOT NULL");
+            return new ColumnConstrainImpl(mBuilder);
+        }
+
+        @Override
+        public ColumnConstraint defaultValue(String value) {
+            mBuilder.append(" DEFAULT").append(value);
+            return this;
+        }
+
+        @Override
+        public References references(String tableName) {
+            return null;
+        }
+
+        @Override
+        public String create() {
+            return mBuilder.append(");").toString();
+        }
+
+        @Override
+        public AutoIncrement primaryKey() {
+            mBuilder.append(" PRIMARY KEY ");
+            return new AutoIncrementImpl(mBuilder);
+        }
+
+        @Override
+        public ColumnType withField(String field) {
+            mBuilder.append(",").append(field);
+            return new ColumnTypeImpl(mBuilder);
+        }
+    }
+
+    private class AutoIncrementImpl implements AutoIncrement {
+        private final StringBuilder mBuilder;
+
+        public AutoIncrementImpl(StringBuilder builder) {
+            mBuilder = builder;
+        }
+
+        @Override
+        public Table autoIncrement() {
+            mBuilder.append(" AUTOINCREMENT");
+            return new TableImpl(mBuilder);
+        }
+
+        @Override
+        public ColumnType withField(String field) {
+            mBuilder.append(",").append(field);
+            return new ColumnTypeImpl(mBuilder);
         }
     }
 }
