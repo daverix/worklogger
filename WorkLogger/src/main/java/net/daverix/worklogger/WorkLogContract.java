@@ -32,7 +32,7 @@ public class WorkLogContract {
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
-                .path("")
+                .path(PATH)
                 .build();
     }
 
