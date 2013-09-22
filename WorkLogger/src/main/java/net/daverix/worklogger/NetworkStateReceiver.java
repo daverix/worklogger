@@ -15,11 +15,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         long time = System.currentTimeMillis();
-        String bssid = intent.getStringExtra(WifiManager.EXTRA_BSSID);
-        if(bssid == null) {
-            Log.e("NetworkStateReceiver", "BSSID is null!");
-            return;
-        }
+
         NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
         if(info == null) {
@@ -29,15 +25,17 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
         switch (info.getState()) {
             case CONNECTED:
+                String bssid = intent.getStringExtra(WifiManager.EXTRA_BSSID);
+
                 Log.i("NetworkStateReceiver", "Saving started state with bssid " + bssid);
                 saveWorkLogState(context, bssid, WorkLogState.STATE_START, time);
                 break;
             case DISCONNECTED:
-                Log.i("NetworkStateReceiver", "Saving ended state with bssid " + bssid);
-                saveWorkLogState(context, bssid, WorkLogState.STATE_END, time);
+                Log.i("NetworkStateReceiver", "Saving ended state");
+                saveWorkLogState(context, null, WorkLogState.STATE_END, time);
                 break;
             default:
-                Log.d("NetworkStateReceiver", "Ignoring network state " + info.getState().name() + " with bssid " + bssid);
+                Log.d("NetworkStateReceiver", "Ignoring network state " + info.getState().name());
         }
     }
 
