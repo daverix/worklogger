@@ -10,9 +10,17 @@ public class WorkLogState implements Parcelable {
     public static final int STATE_START = 1;
     public static final int STATE_END = 2;
 
+    private long mId;
     private String mBssid;
     private long mTime;
     private int mState;
+
+    public WorkLogState(long id, String ssid, long time, int state) {
+        mId = id;
+        mBssid = ssid;
+        mTime = time;
+        mState = state;
+    }
 
     public WorkLogState(String ssid, long time, int state) {
         mBssid = ssid;
@@ -72,5 +80,13 @@ public class WorkLogState implements Parcelable {
 
     public void setState(int state) {
         mState = state;
+    }
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
     }
 }

@@ -9,29 +9,23 @@ import android.net.Uri;
  */
 public class WorkLogStateSaverImpl implements WorkLogStateSaver {
     private final Context mContext;
+    private final WorkLogStateMapper mMapper;
 
-    public WorkLogStateSaverImpl(Context context) {
+    public WorkLogStateSaverImpl(Context context, WorkLogStateMapper mapper) {
         if(context == null)
             throw new IllegalArgumentException("context");
 
+        if(mapper == null)
+            throw new IllegalArgumentException("mapper");
+
+        mMapper = mapper;
         mContext = context;
     }
 
     @Override
     public Uri saveState(WorkLogState state) {
-        ContentValues values = createContentValues(state);
-
-        //TODO: if state is END then look at the latest existing work log state with state START and take BSSID from that can not be more than 24 hours? Nobody works that long?
+        ContentValues values = mMapper.mapValues(state);
 
         return mContext.getContentResolver().insert(WorkLogContract.WorkLogStates.CONTENT_URI, values);
-    }
-
-    protected ContentValues createContentValues(WorkLogState state) {
-        ContentValues values = new ContentValues();
-        values.put(WorkLogContract.WorkLogStates.BSSID, state.getBssid());
-        values.put(WorkLogContract.WorkLogStates.STATE, state.getState());
-        values.put(WorkLogContract.WorkLogStates.TIME, state.getTime());
-
-        return values;
     }
 }

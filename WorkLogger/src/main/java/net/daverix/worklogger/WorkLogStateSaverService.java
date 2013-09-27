@@ -20,7 +20,7 @@ public class WorkLogStateSaverService extends IntentService {
     public void onCreate() {
         super.onCreate();
 
-        mWorkLogStateSaver = new WorkLogStateSaverImpl(this);
+        mWorkLogStateSaver = new WorkLogStateSaverImpl(this, new WorkLogStateMapperImpl());
     }
 
     @Override
