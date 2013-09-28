@@ -43,8 +43,16 @@ public class WorkLogProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
+
         if(db != null && db.isOpen()) {
-            return db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, selection, selectionArgs, null, null, sortOrder, null);
+            final int match = sUriMatcher.match(uri);
+            switch (match) {
+                case MATCH_WORK_LOG_STATES:
+                    return db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, selection, selectionArgs, null, null, sortOrder, null);
+                case MATCH_WORK_LOG_STATE:
+                    return db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, WorkLogContract.WorkLogStates._ID + "=?",
+                            new String[]{uri.getLastPathSegment()}, null, null, sortOrder, null);
+            }
         }
 
         return null;
@@ -57,6 +65,20 @@ public class WorkLogProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+
+        if(db != null && db.isOpen()) {
+            final int match = sUriMatcher.match(uri);
+            switch (match) {
+                case MATCH_WORK_LOG_STATES:
+                    long id = db.insert(WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, null, values);
+                    if(id > 0) {
+                        return Uri.withAppendedPath(WorkLogContract.WorkLogStates.CONTENT_URI, String.valueOf(id));
+                    }
+                    break;
+            }
+        }
+
         return null;
     }
 

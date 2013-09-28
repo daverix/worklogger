@@ -19,20 +19,20 @@ public class WorkLogDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME_WIFI = "wifiNetwork";
 
     private static final String SQL_WORK_LOG_STATE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_WORK_LOG_STATE +
-            " (" + WorkLogStates._ID + " INTEGER NOT NULL PRIMARY KEY," +
+            " (" + WorkLogStates._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             WorkLogStates.BSSID + " TEXT," +
             WorkLogStates.STATE + " INTEGER NOT NULL," +
             WorkLogStates.TIME + " INTEGER NOT NULL)";
 
     private static final String SQL_PLACE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_PLACE +
-            " (" + Places._ID + " INTEGER NOT NULL PRIMARY KEY," +
+            " (" + Places._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             Places.CREATED + " INTEGER NOT NULL," +
             Places.UPDATED + " INTEGER NOT NULL," +
             Places.IS_WORK + " INTEGER NOT NULL," +
             Places.NAME + " TEXT NOT NULL)";
 
     private static final String SQL_WIFI = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_WIFI +
-            " (" + Wifis._ID + " INTEGER NOT NULL PRIMARY KEY," +
+            " (" + Wifis._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             Wifis.PLACE_ID + " INTEGER NOT NULL," +
             Wifis.BSSID + " TEXT NOT NULL)";
 

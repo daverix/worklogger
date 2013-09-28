@@ -30,4 +30,7 @@ dependencies {
 
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.1.+'
+
+    instrumentTestCompile 'junit:junit:4.10'
+    instrumentTestCompile 'org.robolectric:robolectric:2.1.+'
 }

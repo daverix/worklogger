@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import net.daverix.worklogger.WorkLogContract;
+import net.daverix.worklogger.WorkLogProvider;
 import net.daverix.worklogger.WorkLogState;
 import net.daverix.worklogger.WorkLogStateMapper;
 import net.daverix.worklogger.WorkLogStateMapperImpl;
@@ -13,6 +14,7 @@ import net.daverix.worklogger.WorkLogStateSaverImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowContentResolver;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
@@ -45,12 +47,17 @@ public class WorkLogProviderTest {
     }
 
     private WorkLogState saveAndReturnWorkLogState(WorkLogState state) throws Exception {
+        WorkLogProvider provider = new WorkLogProvider();
+        provider.onCreate();
+
+        ShadowContentResolver.registerProvider(WorkLogContract.AUTHORITY, provider);
+
         WorkLogStateMapper mapper = new WorkLogStateMapperImpl();
         WorkLogStateSaver saver = new WorkLogStateSaverImpl(Robolectric.application, mapper);
         Uri uri = saver.saveState(state);
 
         if(uri == null) {
-            throw new Exception("WorkLogState not found");
+            throw new Exception("WorkLogState not inserted!");
         }
         Cursor cursor = null;
         try {
