@@ -14,11 +14,14 @@ public class WorkLogStateSaverService extends IntentService {
 
     public WorkLogStateSaverService() {
         super("WorkLogStateSaverService");
+
+        Log.d("WorkLogStateSaverService", "WorkLogStateSaverService constructor");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("WorkLogStateSaverService", "WorkLogStateSaverService created");
 
         mWorkLogStateSaver = new WorkLogStateSaverImpl(this, new WorkLogStateMapperImpl());
     }

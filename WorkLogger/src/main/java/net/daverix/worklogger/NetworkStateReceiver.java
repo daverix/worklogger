@@ -40,7 +40,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     }
 
     protected void saveWorkLogState(Context context, String bssid, int state, long time) {
-        Intent serviceIntent = new Intent(context, WorkLogStateSaver.class);
+        Intent serviceIntent = new Intent(context, WorkLogStateSaverService.class);
         WorkLogState workLogState = new WorkLogState(bssid, time, state);
         serviceIntent.putExtra(WorkLogStateSaverService.EXTRA_WORK_LOG_STATE, workLogState);
 

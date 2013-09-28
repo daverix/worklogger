@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import static net.daverix.worklogger.WorkLogContract.WorkLogStates;
+
 /**
  * Created by daverix on 9/20/13.
  */
@@ -24,8 +26,8 @@ public class WorkLogProvider extends ContentProvider {
     private static UriMatcher sUriMatcher = new UriMatcher(0);
 
     static {
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.WorkLogStates.PATH, MATCH_WORK_LOG_STATES);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.WorkLogStates.PATH + "/#", MATCH_WORK_LOG_STATE);
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogStates.PATH, MATCH_WORK_LOG_STATES);
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogStates.PATH + "/#", MATCH_WORK_LOG_STATE);
         sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Places.PATH, MATCH_PLACES);
         sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Places.PATH + "/#", MATCH_PLACE);
         sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Wifis.PATH, MATCH_WORK_LOG_STATES);
@@ -48,10 +50,18 @@ public class WorkLogProvider extends ContentProvider {
             final int match = sUriMatcher.match(uri);
             switch (match) {
                 case MATCH_WORK_LOG_STATES:
-                    return db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, selection, selectionArgs, null, null, sortOrder, null);
+                    Cursor cursor = db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, selection, selectionArgs, null, null, sortOrder, null);
+                    if(cursor != null) {
+                        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                    }
+                    return cursor;
                 case MATCH_WORK_LOG_STATE:
-                    return db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, WorkLogContract.WorkLogStates._ID + "=?",
+                    cursor = db.query(false, WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, projection, WorkLogStates._ID + "=?",
                             new String[]{uri.getLastPathSegment()}, null, null, sortOrder, null);
+                    if(cursor != null) {
+                        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                    }
+                    return cursor;
             }
         }
 
@@ -73,7 +83,8 @@ public class WorkLogProvider extends ContentProvider {
                 case MATCH_WORK_LOG_STATES:
                     long id = db.insert(WorkLogDatabaseHelper.TABLE_NAME_WORK_LOG_STATE, null, values);
                     if(id > 0) {
-                        return Uri.withAppendedPath(WorkLogContract.WorkLogStates.CONTENT_URI, String.valueOf(id));
+                        getContext().getContentResolver().notifyChange(WorkLogStates.CONTENT_URI, null);
+                        return Uri.withAppendedPath(WorkLogStates.CONTENT_URI, String.valueOf(id));
                     }
                     break;
             }
