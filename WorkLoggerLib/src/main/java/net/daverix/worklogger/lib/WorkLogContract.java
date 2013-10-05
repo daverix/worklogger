@@ -1,4 +1,4 @@
-package net.daverix.worklogger;
+package net.daverix.worklogger.lib;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -10,9 +10,10 @@ public class WorkLogContract {
     public static final String AUTHORITY = "net.daverix.worklogger.provider";
 
     protected interface WorkLogStateColumns {
-        public static final String BSSID = "bssid";
+        public static final String SOURCE = "source";
         public static final String TIME = "time";
         public static final String STATE = "state";
+        public static final String PLACE_ID = "place_id";
     }
 
     protected interface PlaceColumns {
@@ -20,11 +21,6 @@ public class WorkLogContract {
         public static final String CREATED = "created";
         public static final String UPDATED = "updated";
         public static final String IS_WORK = "is_work";
-    }
-
-    protected interface WifisColumns {
-        public static final String PLACE_ID = "place_id";
-        public static final String BSSID = "bssid";
     }
 
     public static class WorkLogStates implements BaseColumns, WorkLogStateColumns {
@@ -38,15 +34,6 @@ public class WorkLogContract {
 
     public static class Places implements BaseColumns, PlaceColumns {
         public static final String PATH = "places";
-        public static final Uri CONTENT_URI = new Uri.Builder()
-                .scheme("content")
-                .authority(AUTHORITY)
-                .path(PATH)
-                .build();
-    }
-
-    public static class Wifis implements BaseColumns, WifisColumns {
-        public static final String PATH = "wifis";
         public static final Uri CONTENT_URI = new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)

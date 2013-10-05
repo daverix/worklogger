@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import net.daverix.worklogger.lib.WorkLogState;
+import net.daverix.worklogger.lib.WorkLoggerIntent;
+
 /**
  * Created by daverix on 9/19/13.
  */
 public class WorkLogStateSaverService extends IntentService {
-    public static final String EXTRA_WORK_LOG_STATE = "workLogState";
     private WorkLogStateSaver mWorkLogStateSaver;
 
     public WorkLogStateSaverService() {
@@ -23,15 +25,15 @@ public class WorkLogStateSaverService extends IntentService {
         super.onCreate();
         Log.d("WorkLogStateSaverService", "WorkLogStateSaverService created");
 
-        mWorkLogStateSaver = new WorkLogStateSaverImpl(this, new WorkLogStateMapperImpl());
+        mWorkLogStateSaver = new WorkLogStateSaverImpl(this);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        WorkLogState state = intent.getParcelableExtra(EXTRA_WORK_LOG_STATE);
+        WorkLogState state = intent.getParcelableExtra(WorkLoggerIntent.EXTRA_STATE);
 
         if(state == null) {
-            Log.e("WorkLogStateSaverService", "WorkLogState is null");
+            Log.e("WorkLogStateSaverService", "State must not be null!");
             return;
         }
 

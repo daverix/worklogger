@@ -3,11 +3,9 @@ package net.daverix.worklogger.test;
 import android.database.Cursor;
 import android.net.Uri;
 
-import net.daverix.worklogger.WorkLogContract;
+import net.daverix.worklogger.lib.WorkLogContract;
 import net.daverix.worklogger.WorkLogProvider;
-import net.daverix.worklogger.WorkLogState;
-import net.daverix.worklogger.WorkLogStateMapper;
-import net.daverix.worklogger.WorkLogStateMapperImpl;
+import net.daverix.worklogger.lib.WorkLogState;
 import net.daverix.worklogger.WorkLogStateSaver;
 import net.daverix.worklogger.WorkLogStateSaverImpl;
 
@@ -30,20 +28,22 @@ public class WorkLogProviderTest {
     @Test
     public void testShouldVerifyWorkLogStateStartIsSaved() throws Exception {
         //Arrange
-        final String expectedBssid = "aa:bb:cc:dd:ee";
+        final String expectedSource = "wifi";
         final long expectedTime = 123123123;
         final int expectedState = WorkLogState.STATE_START;
+        final int expectedPlaceId = 42;
 
-        WorkLogState state = new WorkLogState(expectedBssid, expectedTime, expectedState);
+        WorkLogState state = new WorkLogState(expectedSource, expectedTime, expectedState, expectedPlaceId);
 
         //Act
         WorkLogState actual = saveAndReturnWorkLogState(state);
 
         //Assert
         assertThat(actual.getId(), is(not(equalTo(0L))));
-        assertThat(actual.getBssid(), is(equalTo(expectedBssid)));
+        assertThat(actual.getSource(), is(equalTo(expectedSource)));
         assertThat(actual.getState(), is(equalTo(expectedState)));
         assertThat(actual.getTime(), is(equalTo(expectedTime)));
+        assertThat(actual.getPlaceId(), is(equalTo(expectedPlaceId)));
     }
 
     private WorkLogState saveAndReturnWorkLogState(WorkLogState state) throws Exception {
@@ -52,8 +52,7 @@ public class WorkLogProviderTest {
 
         ShadowContentResolver.registerProvider(WorkLogContract.AUTHORITY, provider);
 
-        WorkLogStateMapper mapper = new WorkLogStateMapperImpl();
-        WorkLogStateSaver saver = new WorkLogStateSaverImpl(Robolectric.application, mapper);
+        WorkLogStateSaver saver = new WorkLogStateSaverImpl(Robolectric.application);
         Uri uri = saver.saveState(state);
 
         if(uri == null) {
@@ -66,14 +65,14 @@ public class WorkLogProviderTest {
                         WorkLogContract.WorkLogStates._ID,
                         WorkLogContract.WorkLogStates.STATE,
                         WorkLogContract.WorkLogStates.TIME,
-                        WorkLogContract.WorkLogStates.BSSID
+                        WorkLogContract.WorkLogStates.SOURCE
                 }, null, null, null);
 
             if(cursor == null || !cursor.moveToFirst()) {
                 throw new Exception("WorkLogState not found");
             }
 
-            return mapper.mapCursor(cursor);
+            return new WorkLogState(cursor);
         } finally {
             if(cursor != null) {
                 cursor.close();

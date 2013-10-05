@@ -1,1 +1,1 @@
-include ':WorkLogger'
+include ':WorkLogger', ':WorkLoggerWifiPlugin', ':WorkLoggerLib', ':WorkLoggerNfcPlugin'

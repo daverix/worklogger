@@ -9,25 +9,25 @@ import android.support.v4.content.Loader;
 import android.text.format.DateFormat;
 import android.widget.ArrayAdapter;
 
+import net.daverix.worklogger.lib.WorkLogState;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static net.daverix.worklogger.WorkLogContract.WorkLogStates;
+import static net.daverix.worklogger.lib.WorkLogContract.WorkLogStates;
 
 /**
  * Created by daverix on 9/28/13.
  */
 public class TodayFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private TimeHandler mTimeHandler;
-    private WorkLogStateMapper mWorkLogStateMapper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mTimeHandler = new TimeHandlerImpl();
-        mWorkLogStateMapper = new WorkLogStateMapperImpl();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class TodayFragment extends ListFragment implements LoaderManager.LoaderC
                 new String[] {
                         WorkLogStates._ID,
                         WorkLogStates.TIME,
-                        WorkLogStates.BSSID,
+                        WorkLogStates.SOURCE,
                         WorkLogStates.STATE
                 },
                 WorkLogStates.TIME + " >= ? AND " + WorkLogStates.TIME + " < ?",
@@ -60,7 +60,7 @@ public class TodayFragment extends ListFragment implements LoaderManager.LoaderC
         List<WorkLogState> states = new ArrayList<WorkLogState>();
         if(cursor != null && cursor.moveToFirst()) {
             do {
-                states.add(mWorkLogStateMapper.mapCursor(cursor));
+                states.add(new WorkLogState(cursor));
             } while(cursor.moveToNext());
         }
 
@@ -72,15 +72,12 @@ public class TodayFragment extends ListFragment implements LoaderManager.LoaderC
             }
             else if(state.getState() == WorkLogState.STATE_END && startState != null) {
                 String time = DateFormat.getTimeFormat(getActivity()).format(new Date(startState.getTime()));
+                String date = DateFormat.getDateFormat(getActivity()).format(new Date(startState.getTime()));
 
-                double totalSeconds = (double)(state.getTime() - startState.getTime()) / 1000;
-                double totalMinutes = totalSeconds / 60;
-                int hours = (int) (totalMinutes / 60);
-                int minutes = (int) (totalMinutes - hours * 60);
-                double seconds = totalSeconds - minutes * 60;
-                float twoDecimalSeconds = (float) ((int)(seconds * 100)) / 100;
+                double hours = (double)(state.getTime() - startState.getTime()) / 1000 / 60 / 60;
+                float twoDecimalHours = (int)(hours * 100) / 100f;
 
-                sessions.add(time + ": " + hours + "h " + minutes + "m " + twoDecimalSeconds + "s on " + startState.getBssid());
+                sessions.add(twoDecimalHours + "h on " + startState.getSource() + "\n" + date + " " + time);
             }
         }
 

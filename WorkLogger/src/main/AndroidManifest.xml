@@ -4,8 +4,6 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="18" />
@@ -32,11 +30,5 @@
 
         <service android:name="net.daverix.worklogger.WorkLogStateSaverService"
                  android:exported="false" />
-
-        <receiver android:name="net.daverix.worklogger.NetworkStateReceiver">
-            <intent-filter>
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

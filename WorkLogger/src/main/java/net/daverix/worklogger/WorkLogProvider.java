@@ -8,7 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-import static net.daverix.worklogger.WorkLogContract.WorkLogStates;
+import net.daverix.worklogger.lib.WorkLogContract;
+
+import static net.daverix.worklogger.lib.WorkLogContract.PlaceLogs;
+import static net.daverix.worklogger.lib.WorkLogContract.Places;
+import static net.daverix.worklogger.lib.WorkLogContract.WorkLogStates;
 
 /**
  * Created by daverix on 9/20/13.
@@ -19,21 +23,18 @@ public class WorkLogProvider extends ContentProvider {
     private static final int MATCH_WORK_LOG_STATE = 2;
     private static final int MATCH_PLACES = 3;
     private static final int MATCH_PLACE = 4;
-    private static final int MATCH_WIFIS = 5;
-    private static final int MATCH_WIFI = 6;
-    private static final int MATCH_PLACE_LOGS = 7;
+    private static final int MATCH_PLACE_LOGS = 5;
+    private static final int MATCH_PLACE_LOG = 6;
 
     private static UriMatcher sUriMatcher = new UriMatcher(0);
 
     static {
         sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogStates.PATH, MATCH_WORK_LOG_STATES);
         sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogStates.PATH + "/#", MATCH_WORK_LOG_STATE);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Places.PATH, MATCH_PLACES);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Places.PATH + "/#", MATCH_PLACE);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Wifis.PATH, MATCH_WORK_LOG_STATES);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Wifis.PATH + "/#", MATCH_WORK_LOG_STATE);
-        sUriMatcher.addURI(WorkLogContract.AUTHORITY, WorkLogContract.Wifis.PATH + "/#", MATCH_WORK_LOG_STATE);
-
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, Places.PATH, MATCH_PLACES);
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, Places.PATH + "/#", MATCH_PLACE);
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, PlaceLogs.PATH, MATCH_PLACE_LOGS);
+        sUriMatcher.addURI(WorkLogContract.AUTHORITY, PlaceLogs.PATH + "/#", MATCH_PLACE_LOG);
     }
 
     @Override
